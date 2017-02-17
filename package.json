@@ -7,7 +7,8 @@
     "test": "npm run lint && flow && npm run test:mocha",
     "test:mocha": "mocha --require babel-polyfill --compilers js:babel-register src/**/test.js",
     "lint": "eslint 'src/*.js'",
-    "build": "babel src -d . && flow-copy-source src ."
+    "build": "babel src -d . && flow-copy-source src .",
+    "prepublish": "npm run build"
   },
   "author": "Good Eggs <open-source@goodeggs.com>",
   "license": "MIT",
