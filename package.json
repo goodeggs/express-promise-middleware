@@ -1,7 +1,7 @@
 {
   "name": "express-promise-middleware",
   "version": "1.0.0",
-  "description": "",
+  "description": "Write express middleware that wait on Promises before they respond or call next",
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && flow && npm run test:mocha",
