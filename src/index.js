@@ -1,3 +1,5 @@
+// @flow
+
 import bluebird from 'bluebird';
 
 /*
@@ -17,8 +19,8 @@ import bluebird from 'bluebird';
  * throws, though, the promise will resolve without an error so you don't have
  * to deal with uncaught exceptions.
  */
-export function respondJson (middleware) {
-  return function (request, response, next) {
+export function respondJson (middleware: (request?: any, response?: any) => Promise<any>) {
+  return function (request: Object, response: Object, next: (...args: Array<any>) => any) {
     // eslint-disable-next-line prefer-reflect
     return Promise.resolve(middleware(request, response))
     .then(
@@ -46,8 +48,8 @@ export function respondJson (middleware) {
  * throws, though, the promise will resolve without an error so you don't have
  * to deal with uncaught exceptions.
  */
-export function promiseMiddleware (middleware) {
-  return function (request, response, next) {
+export function promiseMiddleware (middleware: (request?: any, response?: any) => Promise<any>) {
+  return function (request: Object, response: Object, next: (...args: Array<any>) => any) {
     // eslint-disable-next-line prefer-reflect
     return bluebird.method(middleware).apply(this, [request, response])
     .then(
