@@ -78,5 +78,8 @@
   },
   "dependencies": {
     "bluebird": "^3.4.7"
+  },
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org"
   }
 }
