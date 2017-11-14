@@ -20,7 +20,7 @@ import bluebird from 'bluebird';
  * to deal with uncaught exceptions.
  */
 export function respondJson (middleware: (request: Object, response: Object) => Promise<any>) {
-  return function (request: Object, response: Object, next: (...args: Array<any>) => any) {
+  return function (request: Object, response: Object, next: (...args: Array<any>) => any): Promise<any> {
     // eslint-disable-next-line prefer-reflect
     return Promise.resolve(middleware(request, response))
     .then(
