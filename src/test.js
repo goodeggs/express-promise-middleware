@@ -50,19 +50,19 @@ describe('express promise middleware', function () {
       expect(this.response.json).not.to.have.been.called();
     });
 
-    it('should not call response.json if the handler sets response.finished', async function () {
+    it('should not call response.json if the handler has initiated a response', async function () {
       const middleware = respondJson((request, response) => {
-        response.finished = true;
+        response.headersSent = true;
       });
       await middleware(this.request, this.response, this.next);
       expect(this.next).to.not.have.been.called();
       expect(this.response.json).not.to.have.been.called();
     });
 
-    it('should reject and not call next() with an error if the handler sets response.finished and also rejects', async function () {
+    it('should reject and not call next() with an error if the handler has initiated a response and also rejects', async function () {
       const error = new Error('crash boom');
       const middleware = respondJson((request, response) => {
-        response.finished = true;
+        response.headersSent = true;
         return Promise.reject(error);
       });
       await expect(middleware(this.request, this.response, this.next)).to.eventually.be.rejected.with(error);
@@ -80,8 +80,11 @@ describe('express promise middleware', function () {
       expect(providedFunction).to.have.been.calledWith(this.request, this.response);
     });
 
-    it('should return a middleware that calls next when the promise resolves', async function () {
-      const middleware = promiseMiddleware(() => Promise.resolve({foo: 'bar'}));
+    it('should return a middleware that calls next when the promise resolves if the handler has not initiated a response', async function () {
+      const middleware = promiseMiddleware(async (request, response) => {
+        response.headersSent = false;
+        return {foo: 'bar'};
+      });
       await middleware(this.request, this.response, this.next);
       expect(this.next).to.have.been.calledOnce();
       expect(this.next.args[0]).to.have.length(0);
@@ -102,18 +105,18 @@ describe('express promise middleware', function () {
       expect(this.next).to.have.been.calledWith(error);
     });
 
-    it('should not call next if the handler sets response.finished', async function () {
+    it('should not call next if the handler has initiated a response', async function () {
       const middleware = promiseMiddleware((request, response) => {
-        response.finished = true;
+        response.headersSent = true;
       });
       await middleware(this.request, this.response, this.next);
       expect(this.next).to.not.have.been.called();
     });
 
-    it('should reject and not call next() with an error if the handler sets response.finished and also rejects', async function () {
+    it('should reject and not call next() with an error if the handler initiates a response and also rejects', async function () {
       const error = new Error('crash boom');
       const middleware = promiseMiddleware((request, response) => {
-        response.finished = true;
+        response.headersSent = true;
         return Promise.reject(error);
       });
       await expect(middleware(this.request, this.response, this.next)).to.eventually.be.rejected.with(error);

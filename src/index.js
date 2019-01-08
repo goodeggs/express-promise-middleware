@@ -25,11 +25,11 @@ export function respondJson (middleware: (request: Object, response: Object) => 
     return Promise.resolve(middleware(request, response))
     .then(
       function (value) {
-        if (response.finished) return;
+        if (response.headersSent) return;
         return response.json(value);
       },
       function (err) {
-        if (response.finished) throw err;
+        if (response.headersSent) throw err;
         next(err);
       },
     );
@@ -54,11 +54,11 @@ export function promiseMiddleware (middleware: (request: Object, response: Objec
     return bluebird.method(middleware).apply(this, [request, response])
     .then(
       function () {
-        if (response.finished) return;
+        if (response.headersSent) return;
         return next();
       },
       function (err) {
-        if (response.finished) throw err;
+        if (response.headersSent) throw err;
         next(err);
       },
     );
